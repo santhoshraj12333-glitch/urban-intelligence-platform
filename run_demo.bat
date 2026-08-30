@@ -50,7 +50,7 @@ echo ------------------------------------------------
 echo  STEP 2/5  - Set up Backend (FastAPI)
 echo ------------------------------------------------
 if not exist "%BACKEND_DIR%\venv" (
-    echo   Creating backend virtual environment (first run, ~1 min)...
+    echo   Creating backend virtual environment ^(first run, ~1 min^)...
     python -m venv "%BACKEND_DIR%\venv"
     if errorlevel 1 ( echo   ERROR creating backend venv. & pause & exit /b 1 )
 )
@@ -64,7 +64,7 @@ echo ------------------------------------------------
 echo  STEP 3/5  - Set up Vehicle/Camera AI (ultralytics)
 echo ------------------------------------------------
 if not exist "%VEHICLE_DIR%\.venv" (
-    echo   Creating vehicle virtual environment (first run, ~1-2 min)...
+    echo   Creating vehicle virtual environment ^(first run, ~1-2 min^)...
     python -m venv "%VEHICLE_DIR%\.venv"
     if errorlevel 1 ( echo   ERROR creating vehicle venv. & pause & exit /b 1 )
 )
@@ -84,7 +84,7 @@ if not exist "%EVENTENGINE_DIR%\.venv" (
 )
 "%EE_PY%" -m pip install --quiet --disable-pip-version-check -r "%EVENTENGINE_DIR%\requirements.txt"
 if not exist "%FRONTEND_DIR%\node_modules" (
-    echo   Installing frontend packages (npm install, first run only)...
+    echo   Installing frontend packages ^(npm install, first run only^)...
     pushd "%FRONTEND_DIR%"
     call npm install
     popd
