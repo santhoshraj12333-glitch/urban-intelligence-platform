@@ -171,7 +171,9 @@ goto :done
 :run_ee
 echo.
 echo   Generating + posting events to the backend...
-"%EE_PY%" "%EVENTENGINE_DIR%\main.py" --backend-url "%BACKEND_URL%/events"
+pushd "%EVENTENGINE_DIR%"
+"%EE_PY%" main.py --backend-url "%BACKEND_URL%/events"
+popd
 echo.
 echo   Events pushed. Refresh the dashboard to see new markers.
 echo   NOTE: Re-running may hit '409 Conflict' for repeat event_ids - that just
