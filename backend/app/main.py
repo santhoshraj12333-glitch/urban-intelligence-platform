@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.database import init_db
 from app.database.seed import seed_data
-from app.api import events, traffic, buses
+from app.api import events, traffic, buses, camera
 
 app = FastAPI(
     title="Urban Intelligence Platform API",
@@ -54,3 +54,9 @@ def health_check():
 app.include_router(events.router)
 app.include_router(traffic.router)
 app.include_router(buses.router)
+app.include_router(camera.router)
+
+
+@app.on_event("shutdown")
+def on_shutdown():
+    camera.shutdown()

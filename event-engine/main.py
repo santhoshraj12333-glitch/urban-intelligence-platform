@@ -40,7 +40,7 @@ from api_client import send_event
 MOCK_DETECTIONS = [
     {"event_type": "POTHOLE", "confidence": 0.92, "frame_id": 1420, "bbox": [120, 200, 300, 350]},
     {"event_type": "POTHOLE", "confidence": 0.90, "frame_id": 1422, "bbox": [118, 205, 298, 348]},
-    {"event_type": "VEHICLE_COUNT", "confidence": 0.85, "frame_id": 1800},
+    {"event_type": "VEHICLE", "confidence": 0.85, "frame_id": 1800},
     {"event_type": "POTHOLE", "confidence": 0.88, "frame_id": 4000, "bbox": [90, 180, 260, 330]},
     {"event_type": "PEDESTRIAN", "confidence": 0.77, "frame_id": 5200},
 ]

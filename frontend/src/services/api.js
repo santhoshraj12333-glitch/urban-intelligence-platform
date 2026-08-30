@@ -130,3 +130,25 @@ export async function getHealth() {
     return false
   }
 }
+
+/** GET /camera/status — is the live camera demo currently running? */
+export async function getCameraStatus() {
+  try {
+    const data = await safeFetch('/camera/status')
+    return !!data.running
+  } catch {
+    return false
+  }
+}
+
+/** POST /camera/start — launch the live webcam demo on the backend. */
+export async function cameraStart() {
+  const data = await safeFetch('/camera/start', { method: 'POST' })
+  return data
+}
+
+/** POST /camera/stop — terminate the running live webcam demo. */
+export async function cameraStop() {
+  const data = await safeFetch('/camera/stop', { method: 'POST' })
+  return data
+}

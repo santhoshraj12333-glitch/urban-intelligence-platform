@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { getHealth } from '../services/api.js'
+import { getHealth, cameraStart, cameraStop, getCameraStatus } from '../services/api.js'
 
 /**
  * components/Navbar.jsx
@@ -8,9 +8,14 @@ import { getHealth } from '../services/api.js'
  * Traffic / PWD / Events — plus a live indicator showing whether the app
  * is talking to the real FastAPI backend or running on mock/demo data.
  *
+ * Also hosts a Camera button that starts/stops the live webcam demo on the
+ * backend (/camera/start + /camera/stop) so it can be triggered right from
+ * the dashboard during a presentation.
+ *
  * Connects to:
  * - src/App.jsx -> rendered on every route
- * - src/services/api.js -> getHealth() for the connection dot
+ * - src/services/api.js -> getHealth(), cameraStart(), cameraStop(),
+ *   getCameraStatus()
  */
 const USE_MOCK = String(import.meta.env.VITE_USE_MOCK) === 'true'
 
@@ -23,6 +28,8 @@ const links = [
 
 export default function Navbar() {
   const [connected, setConnected] = useState(null)
+  const [cameraOn, setCameraOn] = useState(false)
+  const [cameraBusy, setCameraBusy] = useState(false)
 
   useEffect(() => {
     if (USE_MOCK) return
@@ -34,11 +41,31 @@ export default function Navbar() {
       const ok = await getHealth()
       if (!cancelled) setConnected(ok)
     }, 15000)
+    getCameraStatus().then((running) => {
+      if (!cancelled) setCameraOn(running)
+    })
     return () => {
       cancelled = true
       clearInterval(interval)
     }
   }, [])
+
+  const toggleCamera = async () => {
+    setCameraBusy(true)
+    try {
+      if (cameraOn) {
+        await cameraStop()
+        setCameraOn(false)
+      } else {
+        await cameraStart()
+        setCameraOn(true)
+      }
+    } catch {
+      alert('Could not reach backend to control the camera.')
+    } finally {
+      setCameraBusy(false)
+    }
+  }
 
   const statusLabel = USE_MOCK
     ? 'DEMO DATA'
@@ -81,9 +108,36 @@ export default function Navbar() {
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
-        <span className={`h-2 w-2 rounded-full ${statusColor}`} />
-        {statusLabel}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={toggleCamera}
+          disabled={cameraBusy || !connected}
+          className={`flex items-center gap-2 rounded-lg px-3 py-1.5 font-mono text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+            cameraOn
+              ? 'bg-signal-green text-base-950'
+              : 'bg-base-700 text-slate-200 hover:bg-base-600'
+          }`}
+          title={
+            cameraOn
+              ? 'Stop the live camera demo'
+              : 'Start the live camera demo (webcam)'
+          }
+        >
+          <span
+            className={`h-2 w-2 rounded-full ${
+              cameraOn ? 'bg-base-950' : 'bg-signal-cyan'
+            }`}
+          />
+          {cameraBusy
+            ? '…'
+            : cameraOn
+            ? 'CAMERA ON'
+            : 'CAMERA'}
+        </button>
+        <div className="flex items-center gap-2 font-mono text-xs text-slate-400">
+          <span className={`h-2 w-2 rounded-full ${statusColor}`} />
+          {statusLabel}
+        </div>
       </div>
     </nav>
   )
